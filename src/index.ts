@@ -1,7 +1,7 @@
 // Import the MarkdownIt type from 'markdown-it'
 import MarkdownIt from 'markdown-it'
 import { MdItObsidianCalloutsOptions } from './@types';
-import { inspectBlockquoteContent, inspectFencedCodeContent, renderCalloutPrefix } from './inspect';
+import { inspectBlockquoteContent, inspectFencedCodeContent, renderCalloutPostfix, renderCalloutPrefix } from './inspect';
 
 // Define your plugin
 export default function mdItObsidianCallouts(md: MarkdownIt, options: MdItObsidianCalloutsOptions = {}): void {
@@ -20,16 +20,17 @@ export default function mdItObsidianCallouts(md: MarkdownIt, options: MdItObsidi
 
     md.renderer.rules.callout_open = function (tokens, idx) {
         const token = tokens[idx];
-        return renderCalloutPrefix(token, options);
+        return renderCalloutPrefix(token, md, options);
     }
 
     md.renderer.rules.admonition_block = function (tokens, idx) {
         const token = tokens[idx];
-        return renderCalloutPrefix(token, options)
+        return renderCalloutPrefix(token, md, options)
             + `${token.content}\n</div>\n</div>`;
     }
 
     md.renderer.rules.callout_close = function (tokens, idx) {
-        return '</div></div>';
+        const token = tokens[idx];
+        return renderCalloutPostfix(token, options);
     }
 }
